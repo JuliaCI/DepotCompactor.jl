@@ -1,0 +1,30 @@
+steps:
+  - label: ":linux: Test the package"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1.9"
+      - JuliaCI/julia-test#v1:
+    agents:
+      os: "linux"
+      arch: "x86_64"
+      queue: "juliaecosystem"
+
+  - label: ":windows: Test the package"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1.9"
+      - JuliaCI/julia-test#v1:
+    agents:
+      os: "windows"
+      arch: "x86_64"
+      queue: "juliaecosystem"
+
+  - label: ":macos: Test the package"
+    plugins:
+      - JuliaCI/julia#v1:
+          version: "1.9"
+      - JuliaCI/julia-test#v1:
+    agents:
+      os: "macos"
+      arch: "aarch64"
+      queue: "juliaecosystem"

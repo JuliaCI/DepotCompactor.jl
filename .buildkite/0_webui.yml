@@ -1,0 +1,9 @@
+# NOTE: This `0_webui.yml` file is saved in the WebUI.
+# Editing it here has no effect, we simply include this
+# to keep track of what is implemented in the WebUI!
+steps:
+  - label: ":rocket: launch pipelines"
+    commands: |
+      buildkite-agent pipeline upload .buildkite/pipeline.yml
+    agents:
+      queue: "juliaecosystem"
