@@ -80,6 +80,7 @@ end
         check_resource_presences("packages/Zstd_jll", resources, [1, 2])
         check_resource_presences("packages/Example", resources, [2, 3])
         check_resource_presences("packages/Nettle_jll", resources, [1, 3])
+        check_resource_presences("artifacts/", resources, [1, 2, 3])
         check_resource_presences("packages/Scratch", resources, [4])
 
         # Check that checking shared resources works as expected:
@@ -107,6 +108,7 @@ end
         check_resource_presences("packages/Zstd_jll", resources, [5])
         check_resource_presences("packages/Example", resources, [3, 5])
         check_resource_presences("packages/Nettle_jll", resources, [3, 5])
+        check_resource_presences("artifacts/", resources, [3, 5])
 
         # Non-shared resources exist only in their original locations, they were not compacted.
         check_resource_presences("packages/Scratch", resources, [4])

@@ -47,6 +47,18 @@ function compact_depots(dest_depot::String, src_depots::Vector{String}; ref_depo
     end
 end
 
+"""
+    move_resource(src::String, dest::String)
+
+Move a directory from `src` to `dest` in as transactional a manner as possible.
+Using this method should ensure that there is never a moment in time where
+`src` or `dest` contain a partially-copied resource.  This is ensured by using
+transactional methods to move from `src` to `dest`, possibly performing a non-
+transactional copy from `src` to a directory on the same filesystem as `dest`,
+but then performing a transactional rename as the final step.
+
+If this is not possible, an `IOError` will be thrown.
+"""
 function move_resource(src::String, dest::String)
     # First, try to `jl_fs_rename`, this only works if the underlying
     # filesystem allows it:
@@ -69,11 +81,22 @@ function move_resource(src::String, dest::String)
     end
 end
 
+
+"""
+    delete_resource(src::String)
+
+Deletes a resource in as transactional a manner as possible.  Using this method
+should ensure that there is no point in time where `src` exists with half of 
+its contents deleted; it will instead first be transactionally moved to a
+different path, then deleted.
+
+If this is not possible, an `IOError` will be thrown.
+"""
 function delete_resource(src::String)
     temp_dir = mktempdir(dirname(src); cleanup=false)
     rm(temp_dir)
     try
-        err = @ccall jl_fs_rename(temp_dir::Cstring, dest::Cstring)::Int32
+        err = @ccall jl_fs_rename(src::Cstring, temp_dir::Cstring)::Int32
         if err < 0
             throw(Base.IOError("Unable to rename to target '$(temp_dir)'", err))
         end
@@ -89,11 +112,15 @@ function collect_depot_packages(depot::String)
     packagedir = abspath(depot, "packages")
     if isdir(packagedir)
         for name in readdir(packagedir)
-            !isdir(joinpath(packagedir, name)) && continue
+            if !isdir(joinpath(packagedir, name))
+                continue
+            end
 
             for slug in readdir(joinpath(packagedir, name))
                 pkg_dir = joinpath(packagedir, name, slug)
-                !isdir(pkg_dir) && continue
+                if !isdir(pkg_dir)
+                    continue
+                end
 
                 push!(packages, pkg_dir[length(depot)+2:end])
             end
@@ -117,7 +144,12 @@ function collect_depot_artifacts(depot::String)
     return artifacts
 end
 
+"""
+    collect_depot_resources(depot::String)
 
+Return the list of depot-relative paths to packages and artifacts contained
+within the given `depot`.
+"""
 function collect_depot_resources(depot::String)
     return vcat(collect_depot_packages(depot), collect_depot_artifacts(depot))
 end
