@@ -13,6 +13,7 @@ reduce duplication across depots in a stacked depot context.
 """
 function compact_depots(dest_depot::String, src_depots::Vector{String}; ref_depots::Vector{String} = src_depots)
     # `dest_depot` must always be in the `ref_depots`:
+    ref_depots = copy(ref_depots)
     push!(ref_depots, dest_depot)
 
     # Uniqufiy things
