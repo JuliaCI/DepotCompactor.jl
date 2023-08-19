@@ -2,7 +2,7 @@
 
 This package is intended to make managing a shared depot used by multiple workers easier.
 It was designed for running [Yggdrasil](https://github.com/JuliaPackaging/Yggdrasil/), where many large artifacts are downloaded by individual agents on a single machine, each agent writes to its own depot, but many artifacts are duplicated across each agent depot.
-This package allows for transparent "compaction" of depots by inspecting resoures contained within depots and moving shared resources into a shared, read-only depot stored higher on the `DEPOT_PATH` by each agent.
+This package allows for transparent "compaction" of depots by inspecting resources contained within depots and moving shared resources into a shared, read-only depot stored higher on the `DEPOT_PATH` by each agent.
 
 # Example usage
 Agents are run with a stacked depot setup:
